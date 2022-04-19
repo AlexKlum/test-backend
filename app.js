@@ -4,23 +4,30 @@ const express = require("express")
 const mongoose = require("mongoose");
 const bodyParser = require('body-parser')
 
+const dotenv = require('dotenv');
+var dotenvExpand = require('dotenv-expand')
+var env = dotenv.config()
 
-// === KOPPLAR SIDAN TILL MIN MONGODB DATABAS===
-mongoose.connect("mongodb+srv://Klum:Hejsan123@cluster0.nfwnw.mongodb.net/test-db?retryWrites=true&w=majority", {
+dotenvExpand.expand(env)
+
+const CONNECTION_STRING = process.env.CONNECTION_STRING
+const PORT = process.env.PORT || 3001
+
+mongoose.connect(CONNECTION_STRING, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
 
-//const Thread = require("./model/threads");
-//const Reply = require("./model/replies");
-//const Like = require("./model/likes");
+const Thread = require("./model/threads");
+const Reply = require("./model/replies");
+const Like = require("./model/likes");
 const User = require("./model/users");
 const { response } = require("express");
 
 const app = express()
-const PORT = process.env.PORT || 3001
 
 app.use('/healthcheck', require('./routes/healthcheck.js'));
+app.use('/threads', require('./routes/threads.js'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 app.use(bodyParser.json());
@@ -105,6 +112,7 @@ app.post("/users", (request, response) => {
 // Hämta User
 app.get("/users/:id", (request, response)=>{
     console.log(request.params.id)
+    try{
     User.findById(request.params.id, (err, user)=>{
         console.log(user)
         if (err) throw error;
@@ -114,6 +122,18 @@ app.get("/users/:id", (request, response)=>{
             response.status(404).send("Not found")
         }
     })
+}catch(e){
+    response.status(404).send("Bad request")
+}
+})
+
+app.delete("users/:id", (request, response)=>{
+    try{
+        User.deleteOne({ _id: request.params.id});
+        response.status(200).send("Success")
+    } catch(e){
+        response.status(400).send("Bad request")
+    }
 })
 
 app.listen(PORT , ()=>{
