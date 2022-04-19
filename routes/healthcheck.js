@@ -2,7 +2,6 @@ const express = require("express")
 
 const router = express.Router({});
 router.get('/', async (_req, res, _next) => {
-    //optional: add further things to check (e.g. connection to database)
     const healthcheck = {
         uptime: process.uptime(),
         message: 'OK',

@@ -1,6 +1,6 @@
 {
     "name": "test-backend",
-    "description": "Javascript Backend test",
+    "description": "Javascript Backend labb2",
     "repository": "https://github.com/AlexKlum/test-backend.git",
     "logo": "https://cdn.rawgit.com/heroku/node-js-getting-started/main/public/node.svg",
     "keywords": ["node", "express", "heroku"],
